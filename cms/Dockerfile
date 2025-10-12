@@ -3,10 +3,10 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Copy package files
-COPY cms/package.json cms/package-lock.json ./
+COPY cms/package.json ./
 
-# Install dependencies
-RUN npm ci --omit=dev
+# Install dependencies (use npm install since lock file may be out of sync)
+RUN npm install --omit=dev
 
 # Copy application code
 COPY cms/ .
