@@ -42,6 +42,10 @@
     },
     "whatDifferentiatesUs": {
       "type": "richtext"
+    },
+    "videoUrl": {
+      "type": "string",
+      "required": false
     }
   }
 }

@@ -13,6 +13,7 @@ interface Service {
     shortSummary: string;
     whatWeOffer: string;
     whatDifferentiatesUs: string;
+    videoUrl?: string;
     createdAt: string;
     updatedAt: string;
   };
@@ -66,7 +67,7 @@ export default async function ServiceDetailPage({ params }: { params: { slug: st
     notFound();
   }
 
-  const { title, icon, shortSummary, description, whatWeOffer, whatDifferentiatesUs } = service.attributes;
+  const { title, icon, shortSummary, description, whatWeOffer, whatDifferentiatesUs, videoUrl } = service.attributes;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -94,6 +95,21 @@ export default async function ServiceDetailPage({ params }: { params: { slug: st
 
       {/* Content */}
       <div className="max-w-4xl mx-auto px-6 py-12">
+        {/* Video Embed */}
+        {videoUrl && (
+          <section className="mb-12">
+            <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl">
+              <iframe
+                src={videoUrl}
+                title={`${title} video`}
+                className="absolute inset-0 w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          </section>
+        )}
+
         {/* Overview */}
         {description && (
           <section className="mb-12">
