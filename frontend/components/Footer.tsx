@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -9,10 +10,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xl">H</span>
-              </div>
+            <div className="flex items-center space-x-3 mb-4">
+              <Image 
+                src="/helpables_logo.png" 
+                alt="Helpables Logo" 
+                width={40} 
+                height={40}
+                className="w-10 h-10"
+              />
               <span className="font-heading font-bold text-xl">
                 Helpables<span className="text-primary">.</span>
               </span>
