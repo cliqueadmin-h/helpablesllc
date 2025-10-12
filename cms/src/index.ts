@@ -15,40 +15,68 @@ export default {
    * run jobs, or perform some special logic.
    */
   async bootstrap({ strapi }: { strapi: any }) {
-    // Set permissions for public role
-    const publicRole = await strapi
-      .query('plugin::users-permissions.role')
-      .findOne({ where: { type: 'public' } });
-
-    if (!publicRole) {
-      console.warn('Public role not found');
-      return;
-    }
-
-    // Content types to enable public access
-    const contentTypes = ['blog', 'service', 'testimonial', 'homepage', 'faq'];
+    console.log('🔧 Starting bootstrap to configure public permissions...');
     
-    for (const contentType of contentTypes) {
-      // Enable find and findOne permissions
-      await strapi.query('plugin::users-permissions.permission').updateMany({
-        where: {
-          role: publicRole.id,
-          action: `api::${contentType}.${contentType}.find`,
-        },
-        data: { enabled: true },
-      });
+    try {
+      // Get the public role
+      const publicRole = await strapi
+        .query('plugin::users-permissions.role')
+        .findOne({ where: { type: 'public' } });
 
-      await strapi.query('plugin::users-permissions.permission').updateMany({
-        where: {
-          role: publicRole.id,
-          action: `api::${contentType}.${contentType}.findOne`,
-        },
-        data: { enabled: true },
-      });
+      if (!publicRole) {
+        console.error('❌ Public role not found');
+        return;
+      }
 
-      console.log(`✅ Enabled public access for ${contentType}`);
+      console.log(`✅ Found public role with ID: ${publicRole.id}`);
+
+      // Content types to enable public access
+      const contentTypes = ['blog', 'service', 'testimonial', 'homepage', 'faq'];
+      
+      for (const contentType of contentTypes) {
+        const actions = ['find', 'findOne'];
+        
+        for (const action of actions) {
+          const permissionName = `api::${contentType}.${contentType}.${action}`;
+          
+          // Find existing permission
+          const existingPermission = await strapi
+            .query('plugin::users-permissions.permission')
+            .findOne({
+              where: {
+                role: publicRole.id,
+                action: permissionName,
+              },
+            });
+
+          if (existingPermission) {
+            // Update existing permission
+            await strapi
+              .query('plugin::users-permissions.permission')
+              .update({
+                where: { id: existingPermission.id },
+                data: { enabled: true },
+              });
+            console.log(`✅ Enabled ${permissionName}`);
+          } else {
+            // Create new permission if it doesn't exist
+            await strapi
+              .query('plugin::users-permissions.permission')
+              .create({
+                data: {
+                  action: permissionName,
+                  role: publicRole.id,
+                  enabled: true,
+                },
+              });
+            console.log(`✅ Created and enabled ${permissionName}`);
+          }
+        }
+      }
+
+      console.log('🎉 Public permissions configured successfully!');
+    } catch (error) {
+      console.error('❌ Error configuring public permissions:', error);
     }
-
-    console.log('✅ Public permissions configured successfully');
   },
 };
