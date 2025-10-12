@@ -11,6 +11,9 @@ RUN npm install --omit=dev
 # Copy application code
 COPY cms/ .
 
+# Create required directories
+RUN mkdir -p public/uploads .tmp
+
 # Build admin panel
 ENV NODE_ENV=production
 RUN npm run build
