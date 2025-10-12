@@ -22,6 +22,14 @@ export const metadata: Metadata = {
   description: "Helpables LLC provides innovative solutions for your business needs, from AI integration to custom development and automation.",
   keywords: ["business solutions", "AI integration", "automation", "digital transformation", "Helpables"],
   authors: [{ name: "Helpables LLC" }],
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+    },
+  },
   openGraph: {
     title: "Helpables LLC - Empowering Your Digital Transformation",
     description: "Innovative solutions for your business needs",
