@@ -9,14 +9,5 @@ module.exports = {
         middlewares: [],
       },
     },
-    {
-      method: 'GET',
-      path: '/homepage/:id',
-      handler: 'homepage.findOne',
-      config: {
-        policies: [],
-        middlewares: [],
-      },
-    },
   ],
 };
