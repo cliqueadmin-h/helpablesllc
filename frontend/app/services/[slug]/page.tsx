@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
 
 interface Service {
@@ -106,7 +107,21 @@ export default async function ServiceDetailPage({ params }: { params: { slug: st
           <section className="mb-12 bg-white rounded-2xl shadow-lg p-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">What We Offer</h2>
             <div className="prose prose-lg max-w-none">
-              <ReactMarkdown>{whatWeOffer}</ReactMarkdown>
+              <ReactMarkdown
+                components={{
+                  img: ({ node, ...props }) => (
+                    <Image
+                      src={props.src || ''}
+                      alt={props.alt || ''}
+                      width={800}
+                      height={400}
+                      className="rounded-lg my-6"
+                    />
+                  ),
+                }}
+              >
+                {whatWeOffer}
+              </ReactMarkdown>
             </div>
           </section>
         )}
@@ -116,7 +131,21 @@ export default async function ServiceDetailPage({ params }: { params: { slug: st
           <section className="mb-12 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl shadow-lg p-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-6">What Differentiates Us</h2>
             <div className="prose prose-lg max-w-none">
-              <ReactMarkdown>{whatDifferentiatesUs}</ReactMarkdown>
+              <ReactMarkdown
+                components={{
+                  img: ({ node, ...props }) => (
+                    <Image
+                      src={props.src || ''}
+                      alt={props.alt || ''}
+                      width={800}
+                      height={400}
+                      className="rounded-lg my-6"
+                    />
+                  ),
+                }}
+              >
+                {whatDifferentiatesUs}
+              </ReactMarkdown>
             </div>
           </section>
         )}
