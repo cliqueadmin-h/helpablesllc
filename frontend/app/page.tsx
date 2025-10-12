@@ -144,7 +144,7 @@ export default async function Home() {
             Let's discuss how we can help you achieve your goals with innovative solutions.
           </p>
           <Link
-            href="#contact"
+            href="/contact"
             className="bg-white text-primary hover:bg-light-gray font-semibold py-3 px-8 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl inline-block"
           >
             Get In Touch

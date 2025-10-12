@@ -11,7 +11,7 @@ export default function Navbar() {
     { href: '/', label: 'Home' },
     { href: '/services', label: 'Services' },
     { href: '/blog', label: 'Blog' },
-    { href: '#contact', label: 'Contact' },
+    { href: '/contact', label: 'Contact' },
   ];
 
   return (
@@ -39,7 +39,7 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-            <Link href="#contact" className="btn-primary">
+            <Link href="/contact" className="btn-primary">
               Get Started
             </Link>
           </div>
@@ -87,7 +87,7 @@ export default function Navbar() {
               </Link>
             ))}
             <Link
-              href="#contact"
+              href="/contact"
               className="block btn-primary text-center"
               onClick={() => setIsOpen(false)}
             >

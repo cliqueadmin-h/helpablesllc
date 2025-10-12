@@ -116,7 +116,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             Let's discuss how we can help transform your business.
           </p>
-          <Link href="#contact" className="btn-primary">
+          <Link href="/contact" className="btn-primary">
             Contact Us
           </Link>
         </div>

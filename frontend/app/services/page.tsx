@@ -112,7 +112,7 @@ export default async function ServicesPage() {
             We specialize in creating bespoke solutions tailored to your specific needs.
             Let's discuss your project.
           </p>
-          <a href="#contact" className="btn-primary">
+          <a href="/contact" className="btn-primary">
             Contact Us Today
           </a>
         </div>

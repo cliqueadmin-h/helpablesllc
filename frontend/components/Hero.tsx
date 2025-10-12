@@ -16,7 +16,7 @@ export default function Hero({
   title,
   subtitle,
   ctaText = 'Get Started',
-  ctaLink = '#contact',
+  ctaLink = '/contact',
   imageUrl,
 }: HeroProps) {
   return (
