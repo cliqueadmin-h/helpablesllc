@@ -22,7 +22,7 @@ async function getService(slug: string): Promise<Service | null> {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/services?filters[slug][$eq]=${slug}&populate=*`,
       {
-        next: { revalidate: 60 },
+        next: { revalidate: 0 }, // No cache during testing
       }
     );
 
