@@ -75,6 +75,12 @@ export default {
       }
 
       console.log('🎉 Public permissions configured successfully!');
+      
+      // Seed sample data if in production and no content exists
+      if (process.env.NODE_ENV === 'production') {
+        const seed = require('./seed');
+        await seed({ strapi });
+      }
     } catch (error) {
       console.error('❌ Error configuring public permissions:', error);
     }
