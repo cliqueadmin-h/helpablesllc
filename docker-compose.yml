@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  cms:
+    build:
+      context: ./cms
+      dockerfile: Dockerfile
+    container_name: helpables-cms
+    ports:
+      - '1337:1337'
+    volumes:
+      - ./cms/public/uploads:/app/public/uploads
+      - cms-data:/app/.tmp
+    environment:
+      - DATABASE_CLIENT=better-sqlite3
+      - DATABASE_FILENAME=/app/.tmp/data.db
+      - HOST=0.0.0.0
+      - PORT=1337
+      - APP_KEYS=${APP_KEYS:-defaultKey1,defaultKey2}
+      - API_TOKEN_SALT=${API_TOKEN_SALT:-defaultApiTokenSalt}
+      - ADMIN_JWT_SECRET=${ADMIN_JWT_SECRET:-defaultAdminJwtSecret}
+      - TRANSFER_TOKEN_SALT=${TRANSFER_TOKEN_SALT:-defaultTransferTokenSalt}
+      - JWT_SECRET=${JWT_SECRET:-defaultJwtSecret}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:1337/_health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: helpables-frontend
+    ports:
+      - '3000:3000'
+    environment:
+      - NEXT_PUBLIC_STRAPI_API_URL=http://localhost:1337/api
+      - STRAPI_API_URL=http://cms:1337/api
+    depends_on:
+      cms:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  cms-data:
+    driver: local

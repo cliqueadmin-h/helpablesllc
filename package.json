@@ -1,0 +1,33 @@
+{
+  "name": "helpables-jamstack",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Complete Jamstack starter for Helpables LLC",
+  "scripts": {
+    "setup": "node setup.js",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:cms": "cd cms && npm run develop",
+    "dev": "concurrently \"npm run dev:cms\" \"npm run dev:frontend\"",
+    "build:frontend": "cd frontend && npm run build",
+    "build:cms": "cd cms && npm run build",
+    "build": "npm run build:cms && npm run build:frontend",
+    "install:all": "cd frontend && npm install && cd ../cms && npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/helpables/jamstack-starter"
+  },
+  "keywords": [
+    "jamstack",
+    "nextjs",
+    "strapi",
+    "headless-cms",
+    "typescript",
+    "tailwindcss"
+  ],
+  "author": "Helpables LLC",
+  "license": "PROPRIETARY",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -1,0 +1,46 @@
+# Development docker-compose with hot reload
+version: '3.8'
+
+services:
+  cms:
+    build:
+      context: ./cms
+      dockerfile: Dockerfile.dev
+    container_name: helpables-cms-dev
+    ports:
+      - '1337:1337'
+    volumes:
+      - ./cms:/app
+      - /app/node_modules
+      - ./cms/public/uploads:/app/public/uploads
+    environment:
+      - DATABASE_CLIENT=better-sqlite3
+      - DATABASE_FILENAME=/app/.tmp/data.db
+      - HOST=0.0.0.0
+      - PORT=1337
+      - NODE_ENV=development
+    env_file:
+      - ./cms/.env
+    restart: unless-stopped
+    command: npm run develop
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: helpables-frontend-dev
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NEXT_PUBLIC_STRAPI_API_URL=http://localhost:1337/api
+      - STRAPI_API_URL=http://cms:1337/api
+    env_file:
+      - ./frontend/.env.local
+    depends_on:
+      - cms
+    restart: unless-stopped
+    command: npm run dev
