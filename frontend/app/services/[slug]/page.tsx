@@ -109,13 +109,12 @@ export default async function ServiceDetailPage({ params }: { params: { slug: st
             <div className="prose prose-lg max-w-none">
               <ReactMarkdown
                 components={{
+                  // eslint-disable-next-line @next/next/no-img-element
                   img: ({ node, ...props }) => (
-                    <Image
-                      src={props.src || ''}
-                      alt={props.alt || ''}
-                      width={800}
-                      height={400}
-                      className="rounded-lg my-6"
+                    <img
+                      {...props}
+                      className="rounded-lg my-6 w-full h-auto"
+                      alt={props.alt || 'Service image'}
                     />
                   ),
                 }}
@@ -133,13 +132,12 @@ export default async function ServiceDetailPage({ params }: { params: { slug: st
             <div className="prose prose-lg max-w-none">
               <ReactMarkdown
                 components={{
+                  // eslint-disable-next-line @next/next/no-img-element
                   img: ({ node, ...props }) => (
-                    <Image
-                      src={props.src || ''}
-                      alt={props.alt || ''}
-                      width={800}
-                      height={400}
-                      className="rounded-lg my-6"
+                    <img
+                      {...props}
+                      className="rounded-lg my-6 w-full h-auto"
+                      alt={props.alt || 'Service image'}
                     />
                   ),
                 }}
