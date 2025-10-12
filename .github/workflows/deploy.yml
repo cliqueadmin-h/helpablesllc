@@ -1,4 +1,4 @@
-name: Deploy Jamstack Site
+name: Deploy to Netlify
 
 on:
   push:
@@ -10,6 +10,8 @@ on:
 
 env:
   NODE_VERSION: '20'
+  NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+  NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
 
 jobs:
   build-frontend:
@@ -45,45 +47,72 @@ jobs:
           NEXT_PUBLIC_STRAPI_URL: ${{ secrets.NEXT_PUBLIC_STRAPI_URL }}
         run: npm run build
 
-      - name: Deploy to Vercel
+      - name: Deploy to Netlify (Production)
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        working-directory: ./frontend
+        uses: netlify/actions/cli@master
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-        run: |
-          npm install -g vercel
-          vercel --prod --yes --token=$VERCEL_TOKEN
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        with:
+          args: deploy --dir=frontend/.next --prod
+          
+      - name: Deploy to Netlify (Preview)
+        if: github.event_name == 'pull_request'
+        uses: netlify/actions/cli@master
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        with:
+          args: deploy --dir=frontend/.next
 
-  build-cms:
-    name: Build CMS
+  build-and-deploy-cms:
+    name: Build and Deploy CMS
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Option 1: Deploy to Azure Container Apps
+      - name: Deploy to Azure Container Apps
+        if: secrets.AZURE_CREDENTIALS != ''
+        uses: azure/login@v1
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: cms/package-lock.json
-
-      - name: Install dependencies
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Build and push Docker image to Azure
+        if: secrets.AZURE_CREDENTIALS != ''
         working-directory: ./cms
-        run: npm ci
+        run: |
+          az acr build --registry ${{ secrets.AZURE_REGISTRY_NAME }} \
+            --image strapi-cms:${{ github.sha }} \
+            --image strapi-cms:latest \
+            --file Dockerfile .
+      
+      - name: Deploy to Azure Container App
+        if: secrets.AZURE_CREDENTIALS != ''
+        run: |
+          az containerapp update \
+            --name ${{ secrets.AZURE_CONTAINERAPP_NAME }} \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --image ${{ secrets.AZURE_REGISTRY_NAME }}.azurecr.io/strapi-cms:${{ github.sha }}
 
-      - name: Build Strapi
+      # Option 2: Deploy to Railway (using Railway CLI)
+      - name: Deploy to Railway
+        if: secrets.RAILWAY_TOKEN != ''
         working-directory: ./cms
-        run: npm run build
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          npm install -g @railway/cli
+          railway up --service cms
 
-      # Add deployment step for your CMS hosting (Azure App Service, Render, etc.)
-      # Example for Azure:
-      # - name: Deploy to Azure
-      #   uses: azure/webapps-deploy@v2
-      #   with:
-      #     app-name: ${{ secrets.AZURE_APP_NAME }}
-      #     publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-      #     package: ./cms
+      # Option 3: Deploy to Render
+      - name: Trigger Render Deploy
+        if: secrets.RENDER_DEPLOY_HOOK != ''
+        run: |
+          curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}

@@ -1,0 +1,132 @@
+name: Deploy to Netlify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # Frontend: Build and Deploy to Netlify
+  deploy-frontend:
+    name: Deploy Frontend to Netlify
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./frontend
+        run: npm ci
+
+      - name: Run linting
+        working-directory: ./frontend
+        run: npm run lint
+
+      - name: Run type check
+        working-directory: ./frontend
+        run: npm run type-check
+
+      - name: Build Next.js app
+        working-directory: ./frontend
+        env:
+          NEXT_PUBLIC_STRAPI_URL: ${{ secrets.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337' }}
+        run: npm run build
+
+      - name: Deploy to Netlify (Production)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: nwtgck/actions-netlify@v2
+        with:
+          publish-dir: './frontend/.next'
+          production-deploy: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions - ${{ github.event.head_commit.message }}"
+          enable-pull-request-comment: true
+          enable-commit-comment: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 10
+
+      - name: Deploy to Netlify (Preview)
+        if: github.event_name == 'pull_request'
+        uses: nwtgck/actions-netlify@v2
+        with:
+          publish-dir: './frontend/.next'
+          production-deploy: false
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Preview deploy from PR #${{ github.event.number }}"
+          enable-pull-request-comment: true
+          enable-commit-comment: false
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 10
+
+  # CMS: Deploy with Docker
+  deploy-cms:
+    name: Deploy CMS
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Deploy to Railway
+      - name: Deploy to Railway
+        if: env.RAILWAY_TOKEN != ''
+        working-directory: ./cms
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          npm install -g @railway/cli
+          railway up --service cms
+
+      # OR Deploy to Render (via Deploy Hook)
+      - name: Trigger Render Deploy
+        if: env.RENDER_DEPLOY_HOOK != ''
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: curl -X POST "$RENDER_DEPLOY_HOOK"
+
+      # OR Deploy to Azure Container Apps
+      - name: Login to Azure
+        if: env.AZURE_CREDENTIALS != ''
+        uses: azure/login@v1
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Build and Deploy to Azure
+        if: env.AZURE_CREDENTIALS != ''
+        working-directory: ./cms
+        env:
+          AZURE_REGISTRY_NAME: ${{ secrets.AZURE_REGISTRY_NAME }}
+          AZURE_CONTAINERAPP_NAME: ${{ secrets.AZURE_CONTAINERAPP_NAME }}
+          AZURE_RESOURCE_GROUP: ${{ secrets.AZURE_RESOURCE_GROUP }}
+        run: |
+          az acr build --registry $AZURE_REGISTRY_NAME \
+            --image strapi-cms:${{ github.sha }} \
+            --image strapi-cms:latest \
+            --file Dockerfile .
+          
+          az containerapp update \
+            --name $AZURE_CONTAINERAPP_NAME \
+            --resource-group $AZURE_RESOURCE_GROUP \
+            --image $AZURE_REGISTRY_NAME.azurecr.io/strapi-cms:${{ github.sha }}
