@@ -1,5 +1,6 @@
 import { getEntries } from '@/lib/cms';
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Our Services - Helpables LLC',
@@ -29,20 +30,29 @@ export default async function ServicesPage() {
           {services.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {services.map((service, index) => (
-                <div
+                <Link
                   key={service.id}
-                  className="card hover:scale-105 transition-transform duration-200"
+                  href={`/services/${service.attributes.slug || service.attributes.title.toLowerCase().replace(/\s+/g, '-')}`}
+                  className="card hover:scale-105 transition-transform duration-200 cursor-pointer group"
                 >
                   {service.attributes.icon && (
-                    <div className="text-5xl mb-6">{service.attributes.icon}</div>
+                    <div className="text-5xl mb-6 group-hover:scale-110 transition-transform">
+                      {service.attributes.icon}
+                    </div>
                   )}
-                  <h3 className="text-2xl font-heading font-semibold text-dark mb-4">
+                  <h3 className="text-2xl font-heading font-semibold text-dark mb-4 group-hover:text-blue-600 transition-colors">
                     {service.attributes.title}
                   </h3>
-                  <p className="text-gray-600 leading-relaxed">
+                  <p className="text-gray-600 leading-relaxed mb-4">
                     {service.attributes.description}
                   </p>
-                </div>
+                  <div className="text-blue-600 font-semibold flex items-center gap-2">
+                    Learn More
+                    <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </Link>
               ))}
             </div>
           ) : (
