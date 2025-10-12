@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs-20_x"]
+
+[phases.build]
+cmds = ["cd cms && npm ci && npm run build"]
+
+[start]
+cmd = "cd cms && npm run start"
+
+[variables]
+NODE_ENV = "production"
