@@ -174,24 +174,6 @@ export default function ContactPage() {
             </form>
           )}
         </div>
-
-        <div className="mt-12 grid md:grid-cols-3 gap-8 text-center">
-          <div>
-            <div className="text-3xl mb-2">📧</div>
-            <h3 className="font-semibold text-gray-900 mb-1">Email</h3>
-            <p className="text-gray-600">contact@helpables.com</p>
-          </div>
-          <div>
-            <div className="text-3xl mb-2">📞</div>
-            <h3 className="font-semibold text-gray-900 mb-1">Phone</h3>
-            <p className="text-gray-600">(555) 123-4567</p>
-          </div>
-          <div>
-            <div className="text-3xl mb-2">📍</div>
-            <h3 className="font-semibold text-gray-900 mb-1">Location</h3>
-            <p className="text-gray-600">Your City, State</p>
-          </div>
-        </div>
       </div>
     </div>
   );
