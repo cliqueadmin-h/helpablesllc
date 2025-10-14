@@ -93,7 +93,7 @@ export default function Footer() {
           <div>
             <h3 className="font-heading font-semibold text-lg mb-4">Contact</h3>
             <ul className="space-y-2 text-gray-400">
-              <li>Email: cliqueadmin@helpables.org</li>
+              <li>Email: support@helpables.org</li>
             </ul>
           </div>
         </div>
