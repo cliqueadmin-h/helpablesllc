@@ -23,8 +23,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-gray-400 mb-4 max-w-md">
-              Empowering businesses with innovative solutions for digital transformation, 
-              AI integration, and custom automation.
+              Turning vision into intelligent digital reality with the power of design, AI, and automation.
             </p>
             <div className="flex space-x-4">
               <a
