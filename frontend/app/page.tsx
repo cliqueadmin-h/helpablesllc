@@ -45,7 +45,11 @@ export default async function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {services.length > 0 ? (
               services.map((service) => (
-                <div key={service.id} className="card">
+                <Link
+                  key={service.id}
+                  href={`/services/${service.attributes.slug}`}
+                  className="card hover:scale-105 transition-transform duration-200 cursor-pointer"
+                >
                   {service.attributes.icon && (
                     <div className="text-4xl mb-4">{service.attributes.icon}</div>
                   )}
@@ -53,7 +57,7 @@ export default async function Home() {
                     {service.attributes.title}
                   </h3>
                   <p className="text-gray-600 mb-4">{service.attributes.description}</p>
-                </div>
+                </Link>
               ))
             ) : (
               // Fallback services
