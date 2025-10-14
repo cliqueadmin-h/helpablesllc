@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import ThemeToggle from './ThemeToggle';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +17,7 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
+    <nav className="bg-white dark:bg-gray-800 shadow-md sticky top-0 z-50 transition-colors">
       <div className="container-custom">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -39,11 +40,12 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-dark hover:text-primary transition-colors duration-200 font-medium"
+                className="text-dark dark:text-gray-200 hover:text-primary transition-colors duration-200 font-medium"
               >
                 {link.label}
               </Link>
             ))}
+            <ThemeToggle />
             <Link href="/contact" className="btn-primary">
               Get Started
             </Link>
@@ -85,12 +87,16 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="block py-2 text-dark hover:text-primary transition-colors duration-200 font-medium"
+                className="block py-2 text-dark dark:text-gray-200 hover:text-primary transition-colors duration-200 font-medium"
                 onClick={() => setIsOpen(false)}
               >
                 {link.label}
               </Link>
             ))}
+            <div className="flex items-center justify-between py-2">
+              <span className="text-dark dark:text-gray-200 font-medium">Theme</span>
+              <ThemeToggle />
+            </div>
             <Link
               href="/contact"
               className="block btn-primary text-center"

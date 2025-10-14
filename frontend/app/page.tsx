@@ -31,13 +31,13 @@ export default async function Home() {
       />
 
       {/* Services Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white dark:bg-gray-900 transition-colors">
         <div className="container-custom">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-heading font-bold text-dark mb-4">
+            <h2 className="text-4xl font-heading font-bold text-dark dark:text-white mb-4">
               Our Services
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Comprehensive solutions tailored to your business needs
             </p>
           </div>
@@ -106,13 +106,13 @@ export default async function Home() {
 
       {/* Testimonials Section */}
       {testimonials.length > 0 && (
-        <section className="py-20 bg-light">
+        <section className="py-20 bg-light dark:bg-gray-800 transition-colors">
           <div className="container-custom">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-heading font-bold text-dark mb-4">
+              <h2 className="text-4xl font-heading font-bold text-dark dark:text-white mb-4">
                 What Our Clients Say
               </h2>
-              <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
                 Don't just take our word for it
               </p>
             </div>
