@@ -93,9 +93,7 @@ export default function Footer() {
           <div>
             <h3 className="font-heading font-semibold text-lg mb-4">Contact</h3>
             <ul className="space-y-2 text-gray-400">
-              <li>Email: hello@helpables.io</li>
-              <li>Phone: +1 (555) 123-4567</li>
-              <li>Location: Remote-First</li>
+              <li>Email: cliqueadmin@helpables.org</li>
             </ul>
           </div>
         </div>
