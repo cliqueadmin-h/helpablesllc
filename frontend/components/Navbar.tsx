@@ -46,8 +46,12 @@ export default function Navbar() {
               </Link>
             ))}
             <ThemeToggle />
-            <Link href="/contact" className="btn-primary">
-              Get Started
+            <Link 
+              href="/contact?tab=booking" 
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center space-x-2"
+            >
+              <span>📅</span>
+              <span>Book Free Consultation</span>
             </Link>
           </div>
 
@@ -98,11 +102,11 @@ export default function Navbar() {
               <ThemeToggle />
             </div>
             <Link
-              href="/contact"
-              className="block btn-primary text-center"
+              href="/contact?tab=booking"
+              className="block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg font-semibold text-center hover:from-blue-700 hover:to-purple-700 transition-all duration-200"
               onClick={() => setIsOpen(false)}
             >
-              Get Started
+              📅 Book Free Consultation
             </Link>
           </motion.div>
         )}
