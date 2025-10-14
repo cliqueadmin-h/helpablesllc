@@ -10,6 +10,7 @@ interface HeroProps {
   ctaText?: string;
   ctaLink?: string;
   imageUrl?: string;
+  videoUrl?: string;
 }
 
 export default function Hero({
@@ -18,9 +19,10 @@ export default function Hero({
   ctaText = 'Get Started',
   ctaLink = '/contact',
   imageUrl,
+  videoUrl,
 }: HeroProps) {
   return (
-    <section className="relative bg-gradient-to-br from-light via-white to-light-gray overflow-hidden">
+    <section className="relative bg-gradient-to-br from-light via-white to-light-gray dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-hidden">
       <div className="container-custom py-20 md:py-32">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
@@ -29,10 +31,10 @@ export default function Hero({
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-dark mb-6 leading-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-dark dark:text-white mb-6 leading-tight">
               {title}
             </h1>
-            <p className="text-lg md:text-xl text-gray-600 mb-8 leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
               {subtitle}
             </p>
             <div className="flex flex-wrap gap-4">
@@ -45,14 +47,25 @@ export default function Hero({
             </div>
           </motion.div>
 
-          {/* Image/Illustration */}
+          {/* Video/Image/Illustration */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative"
           >
-            {imageUrl ? (
+            {videoUrl ? (
+              <div className="relative w-full h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
+                <video
+                  src={videoUrl}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : imageUrl ? (
               <div className="relative w-full h-96 lg:h-[500px] rounded-2xl overflow-hidden shadow-2xl">
                 <Image
                   src={imageUrl}
@@ -78,7 +91,7 @@ export default function Hero({
                       <path d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                   </div>
-                  <p className="text-2xl font-heading font-semibold text-dark">
+                  <p className="text-2xl font-heading font-semibold text-dark dark:text-white">
                     Empowering Innovation
                   </p>
                 </div>

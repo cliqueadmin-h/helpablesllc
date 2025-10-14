@@ -28,6 +28,7 @@ export default async function Home() {
           'Innovative solutions for modern businesses. From AI integration to custom automation, we help you succeed in the digital age.'
         }
         imageUrl={getStrapiImageUrl(homepage?.heroImage) || undefined}
+        videoUrl={getStrapiImageUrl(homepage?.heroVideo) || undefined}
       />
 
       {/* Services Section */}
