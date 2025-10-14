@@ -53,10 +53,10 @@ export default async function Home() {
                   {service.attributes.icon && (
                     <div className="text-4xl mb-4">{service.attributes.icon}</div>
                   )}
-                  <h3 className="text-2xl font-heading font-semibold text-dark mb-3">
+                  <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-3">
                     {service.attributes.title}
                   </h3>
-                  <p className="text-gray-600 mb-4">{service.attributes.description}</p>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">{service.attributes.description}</p>
                 </Link>
               ))
             ) : (
@@ -64,30 +64,30 @@ export default async function Home() {
               <>
                 <div className="card">
                   <div className="text-4xl mb-4">🤖</div>
-                  <h3 className="text-2xl font-heading font-semibold text-dark mb-3">
+                  <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-3">
                     AI Integration
                   </h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">
                     Leverage cutting-edge AI technologies to automate processes and gain
                     valuable insights.
                   </p>
                 </div>
                 <div className="card">
                   <div className="text-4xl mb-4">⚡</div>
-                  <h3 className="text-2xl font-heading font-semibold text-dark mb-3">
+                  <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-3">
                     Custom Development
                   </h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">
                     Tailored software solutions built with modern technologies to meet your
                     specific needs.
                   </p>
                 </div>
                 <div className="card">
                   <div className="text-4xl mb-4">🔄</div>
-                  <h3 className="text-2xl font-heading font-semibold text-dark mb-3">
+                  <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-3">
                     Automation
                   </h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">
                     Streamline your workflows with intelligent automation solutions that save
                     time and resources.
                   </p>
@@ -121,15 +121,15 @@ export default async function Home() {
               {testimonials.map((testimonial) => (
                 <div key={testimonial.id} className="card">
                   <div className="text-primary text-4xl mb-4">"</div>
-                  <p className="text-gray-700 mb-6 italic">
+                  <p className="text-gray-700 dark:text-gray-300 mb-6 italic">
                     {testimonial.attributes.quote}
                   </p>
-                  <div className="border-t pt-4">
-                    <p className="font-semibold text-dark">
+                  <div className="border-t dark:border-gray-600 pt-4">
+                    <p className="font-semibold text-dark dark:text-white">
                       {testimonial.attributes.author}
                     </p>
                     {testimonial.attributes.company && (
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
                         {testimonial.attributes.company}
                       </p>
                     )}

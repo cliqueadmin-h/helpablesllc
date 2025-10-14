@@ -71,7 +71,7 @@ export default async function ServiceDetailPage({ params }: { params: { slug: st
   const { title, icon, shortSummary, description, whatWeOffer, whatDifferentiatesUs, videoUrl } = service.attributes;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
         <div className="max-w-4xl mx-auto px-6">
@@ -114,16 +114,16 @@ export default async function ServiceDetailPage({ params }: { params: { slug: st
         {/* Overview */}
         {description && (
           <section className="mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Overview</h2>
-            <p className="text-lg text-gray-700 leading-relaxed">{description}</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Overview</h2>
+            <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">{description}</p>
           </section>
         )}
 
         {/* What We Offer */}
         {whatWeOffer && (
-          <section className="mb-12 bg-white rounded-2xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">What We Offer</h2>
-            <div className="prose prose-lg max-w-none">
+          <section className="mb-12 bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">What We Offer</h2>
+            <div className="prose prose-lg dark:prose-invert max-w-none">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{
@@ -145,9 +145,9 @@ export default async function ServiceDetailPage({ params }: { params: { slug: st
 
         {/* What Differentiates Us */}
         {whatDifferentiatesUs && (
-          <section className="mb-12 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl shadow-lg p-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">What Differentiates Us</h2>
-            <div className="prose prose-lg max-w-none">
+          <section className="mb-12 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-700 dark:to-gray-800 rounded-2xl shadow-lg p-8">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">What Differentiates Us</h2>
+            <div className="prose prose-lg dark:prose-invert max-w-none">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
                 components={{

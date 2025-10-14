@@ -15,7 +15,7 @@ export default async function ServicesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-light">
+    <div className="min-h-screen bg-light dark:bg-gray-900">
       {/* Header */}
       <section className="bg-gradient-to-r from-primary to-secondary text-white py-20">
         <div className="container-custom text-center">
@@ -42,13 +42,13 @@ export default async function ServicesPage() {
                       {service.attributes.icon}
                     </div>
                   )}
-                  <h3 className="text-2xl font-heading font-semibold text-dark mb-4 group-hover:text-blue-600 transition-colors">
+                  <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                     {service.attributes.title}
                   </h3>
-                  <p className="text-gray-600 leading-relaxed mb-4">
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
                     {service.attributes.description}
                   </p>
-                  <div className="text-blue-600 font-semibold flex items-center gap-2">
+                  <div className="text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-2">
                     Learn More
                     <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
