@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CalendlyWidget from '@/components/CalendlyWidget';
 
-export default function ContactPage() {
+function ContactContent() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'message' | 'booking'>('message');
 
@@ -103,7 +103,7 @@ export default function ContactPage() {
 
         <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8">
           {activeTab === 'booking' ? (
-            <CalendlyWidget url="https://calendly.com/your-username/30min" />
+            <CalendlyWidget url="https://calendly.com/cliqueadmin-helpables/30min" />
           ) : status === 'success' ? (
             <div className="text-center py-8">
               <div className="text-green-600 text-6xl mb-4">✓</div>
@@ -216,5 +216,20 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ContactPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
+        </div>
+      </div>
+    }>
+      <ContactContent />
+    </Suspense>
   );
 }

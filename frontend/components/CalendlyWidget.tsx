@@ -6,7 +6,7 @@ interface CalendlyWidgetProps {
   url?: string;
 }
 
-export default function CalendlyWidget({ url = 'https://calendly.com/your-username/30min' }: CalendlyWidgetProps) {
+export default function CalendlyWidget({ url = 'https://calendly.com/cliqueadmin-helpables/30min' }: CalendlyWidgetProps) {
   useEffect(() => {
     // Load Calendly script
     const script = document.createElement('script');
