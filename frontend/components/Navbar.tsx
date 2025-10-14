@@ -29,7 +29,7 @@ export default function Navbar() {
               height={40}
               className="w-10 h-10"
             />
-            <span className="font-heading font-bold text-xl text-dark">
+            <span className="font-heading font-bold text-xl text-dark dark:text-white">
               Helpables<span className="text-primary">.</span>
             </span>
           </Link>
