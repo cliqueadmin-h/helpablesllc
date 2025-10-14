@@ -9,7 +9,10 @@ export default async function Home() {
   // Fetch homepage, services, and testimonials from CMS
   const [homepageData, services, testimonials] = await Promise.all([
     getEntries('homepage'),
-    getEntries('services', { pagination: { pageSize: 3 } }),
+    getEntries('services', { 
+      sort: 'order:asc',
+      pagination: { pageSize: 3 } 
+    }),
     getEntries('testimonials', { pagination: { pageSize: 3 } }),
   ]);
 

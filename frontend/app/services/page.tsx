@@ -10,7 +10,9 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function ServicesPage() {
-  const services = await getEntries('services');
+  const services = await getEntries('services', {
+    sort: 'order:asc',
+  });
 
   return (
     <div className="min-h-screen bg-light">
