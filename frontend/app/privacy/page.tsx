@@ -65,9 +65,10 @@ export default async function PrivacyPage() {
           {/* Content */}
           <div className="px-8 py-12">
             <div className="prose prose-lg dark:prose-invert max-w-none
-              prose-headings:font-heading prose-headings:font-bold
-              prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
-              prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+              prose-headings:font-heading prose-headings:font-bold prose-headings:text-gray-900 dark:prose-headings:text-white
+              prose-h1:text-3xl dark:prose-h1:text-white
+              prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4 dark:prose-h2:text-white
+              prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3 dark:prose-h3:text-white
               prose-p:text-gray-700 dark:prose-p:text-gray-300 prose-p:leading-relaxed prose-p:mb-4
               prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
               prose-ul:my-4 prose-ul:list-disc prose-ul:pl-6
