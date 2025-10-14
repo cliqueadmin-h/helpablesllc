@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Service {
   id: number;
@@ -124,6 +125,7 @@ export default async function ServiceDetailPage({ params }: { params: { slug: st
             <h2 className="text-3xl font-bold text-gray-900 mb-6">What We Offer</h2>
             <div className="prose prose-lg max-w-none">
               <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
                 components={{
                   // eslint-disable-next-line @next/next/no-img-element
                   img: ({ node, ...props }) => (
@@ -147,6 +149,7 @@ export default async function ServiceDetailPage({ params }: { params: { slug: st
             <h2 className="text-3xl font-bold text-gray-900 mb-6">What Differentiates Us</h2>
             <div className="prose prose-lg max-w-none">
               <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
                 components={{
                   // eslint-disable-next-line @next/next/no-img-element
                   img: ({ node, ...props }) => (
