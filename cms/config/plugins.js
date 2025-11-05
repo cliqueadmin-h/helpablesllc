@@ -35,8 +35,12 @@ module.exports = ({ env }) => ({
         api_secret: env('CLOUDINARY_SECRET'),
       },
       actionOptions: {
-        upload: {},
-        uploadStream: {},
+        upload: {
+          resource_type: 'auto', // Automatically detect image/video/raw
+        },
+        uploadStream: {
+          resource_type: 'auto', // Automatically detect image/video/raw
+        },
         delete: {},
       },
     },
