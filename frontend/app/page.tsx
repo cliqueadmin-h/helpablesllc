@@ -1,4 +1,4 @@
-import { getEntries, getStrapiImageUrl } from '@/lib/cms';
+import { getEntries, getSingleType, getStrapiImageUrl } from '@/lib/cms';
 import Hero from '@/components/Hero';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,7 +8,7 @@ export const revalidate = 60; // Revalidate every 60 seconds
 export default async function Home() {
   // Fetch homepage, services, and testimonials from CMS
   const [homepageData, services, testimonials] = await Promise.all([
-    getEntries('homepage'),
+    getSingleType('homepage'),
     getEntries('services', { 
       sort: 'order:asc',
       pagination: { pageSize: 3 } 
@@ -16,7 +16,7 @@ export default async function Home() {
     getEntries('testimonials', { pagination: { pageSize: 3 } }),
   ]);
 
-  const homepage = homepageData[0]?.attributes;
+  const homepage = homepageData?.attributes;
 
   return (
     <>

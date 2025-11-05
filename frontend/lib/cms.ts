@@ -131,6 +131,31 @@ export async function getEntryBySlug(
 }
 
 /**
+ * Fetch a single type from Strapi CMS (e.g., homepage, about)
+ * Single types return data directly, not in an array
+ */
+export async function getSingleType(
+  type: string,
+  populate: string = '*'
+): Promise<any | null> {
+  try {
+    const res = await fetch(`${STRAPI_URL}/api/${type}?populate=${populate}`, {
+      next: { revalidate: 60 },
+    });
+    
+    if (!res.ok) {
+      throw new Error(`Failed to fetch ${type}: ${res.statusText}`);
+    }
+    
+    const json = await res.json();
+    return json.data || null;
+  } catch (error) {
+    console.error(`Error fetching ${type}:`, error);
+    return null;
+  }
+}
+
+/**
  * Helper to get image URL from Strapi
  */
 export function getStrapiImageUrl(image: StrapiImage | null | undefined): string | null {
