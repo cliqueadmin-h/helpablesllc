@@ -19,7 +19,7 @@ export default function Footer() {
                 className="w-10 h-10"
               />
               <span className="font-heading font-bold text-xl">
-                Helpables<span className="text-primary">.</span>
+                Helpables
               </span>
             </div>
             <p className="text-gray-400 mb-4 max-w-md">
