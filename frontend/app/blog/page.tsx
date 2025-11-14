@@ -1,5 +1,6 @@
-import { getEntries } from '@/lib/cms';
+import { getEntries, getStrapiImageUrl } from '@/lib/cms';
 import Link from 'next/link';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import { formatDate } from '@/lib/cms';
 
@@ -30,41 +31,60 @@ export default async function BlogPage() {
         <div className="container-custom">
           {blogs.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {blogs.map((blog) => (
-                <Link
-                  key={blog.id}
-                  href={`/blog/${blog.attributes.slug}`}
-                  className="card hover:scale-105 transition-transform duration-200 group"
-                >
-                  <div className="mb-4">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      {formatDate(blog.attributes.createdAt)}
-                    </span>
-                  </div>
-                  <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-3 group-hover:text-primary dark:group-hover:text-secondary transition-colors">
-                    {blog.attributes.title}
-                  </h3>
-                  {blog.attributes.excerpt && (
-                    <p className="text-gray-600 dark:text-gray-300 line-clamp-3">
-                      {blog.attributes.excerpt}
-                    </p>
-                  )}
-                  <div className="mt-4 text-primary dark:text-secondary font-medium flex items-center">
-                    Read More
-                    <svg
-                      className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </Link>
-              ))}
+              {blogs.map((blog) => {
+                const coverImageUrl = getStrapiImageUrl(blog.attributes.coverImage);
+                
+                return (
+                  <Link
+                    key={blog.id}
+                    href={`/blog/${blog.attributes.slug}`}
+                    className="card hover:scale-105 transition-transform duration-200 group overflow-hidden p-0"
+                  >
+                    {/* Cover Image */}
+                    {coverImageUrl && (
+                      <div className="relative w-full h-48 overflow-hidden">
+                        <Image
+                          src={coverImageUrl}
+                          alt={blog.attributes.title}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Content */}
+                    <div className="p-6">
+                      <div className="mb-4">
+                        <span className="text-sm text-gray-500 dark:text-gray-400">
+                          {formatDate(blog.attributes.createdAt)}
+                        </span>
+                      </div>
+                      <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-3 group-hover:text-primary dark:group-hover:text-secondary transition-colors">
+                        {blog.attributes.title}
+                      </h3>
+                      {blog.attributes.excerpt && (
+                        <p className="text-gray-600 dark:text-gray-300 line-clamp-3">
+                          {blog.attributes.excerpt}
+                        </p>
+                      )}
+                      <div className="mt-4 text-primary dark:text-secondary font-medium flex items-center">
+                        Read More
+                        <svg
+                          className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path d="M9 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           ) : (
             <div className="text-center py-20">
