@@ -38,7 +38,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="https://linkedin.com/company/helpables"
+                href="https://www.linkedin.com/company/helpables-io/posts"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-primary transition-colors"
