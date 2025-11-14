@@ -14,7 +14,7 @@ export default async function BlogPage() {
   const blogs = await getEntries('blogs', { sort: 'createdAt:desc' });
 
   return (
-    <div className="min-h-screen bg-light">
+    <div className="min-h-screen bg-light dark:bg-gray-900">
       {/* Header */}
       <section className="bg-gradient-to-r from-primary to-secondary text-white py-20">
         <div className="container-custom text-center">
@@ -37,19 +37,19 @@ export default async function BlogPage() {
                   className="card hover:scale-105 transition-transform duration-200 group"
                 >
                   <div className="mb-4">
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-gray-500 dark:text-gray-400">
                       {formatDate(blog.attributes.createdAt)}
                     </span>
                   </div>
-                  <h3 className="text-2xl font-heading font-semibold text-dark mb-3 group-hover:text-primary transition-colors">
+                  <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-3 group-hover:text-primary dark:group-hover:text-secondary transition-colors">
                     {blog.attributes.title}
                   </h3>
                   {blog.attributes.excerpt && (
-                    <p className="text-gray-600 line-clamp-3">
+                    <p className="text-gray-600 dark:text-gray-300 line-clamp-3">
                       {blog.attributes.excerpt}
                     </p>
                   )}
-                  <div className="mt-4 text-primary font-medium flex items-center">
+                  <div className="mt-4 text-primary dark:text-secondary font-medium flex items-center">
                     Read More
                     <svg
                       className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform"
@@ -69,10 +69,10 @@ export default async function BlogPage() {
           ) : (
             <div className="text-center py-20">
               <div className="text-6xl mb-6">📝</div>
-              <h3 className="text-2xl font-heading font-semibold text-dark mb-4">
+              <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-4">
                 No Blog Posts Yet
               </h3>
-              <p className="text-gray-600 max-w-md mx-auto">
+              <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
                 We're working on creating amazing content for you. Check back soon!
               </p>
             </div>

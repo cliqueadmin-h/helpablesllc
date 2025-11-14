@@ -53,7 +53,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const coverImageUrl = getStrapiImageUrl(blog.attributes.coverImage);
 
   return (
-    <article className="min-h-screen bg-light">
+    <article className="min-h-screen bg-light dark:bg-gray-900">
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-primary to-secondary text-white py-20">
         <div className="container-custom">
@@ -77,7 +77,12 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <h1 className="text-4xl md:text-5xl font-heading font-bold mb-6 max-w-4xl">
             {blog.attributes.title}
           </h1>
-          <div className="text-white/90 text-lg">
+          {blog.attributes.excerpt && (
+            <p className="text-xl text-white/90 mb-4 max-w-3xl">
+              {blog.attributes.excerpt}
+            </p>
+          )}
+          <div className="text-white/80 text-lg">
             {formatDate(blog.attributes.createdAt)}
           </div>
         </div>
@@ -101,19 +106,19 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       {/* Content */}
       <section className="py-12">
         <div className="container-custom max-w-4xl">
-          <div className="bg-white rounded-xl shadow-lg p-8 md:p-12">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 md:p-12">
             <CMSRenderer content={blog.attributes.body} />
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-white dark:bg-gray-800">
         <div className="container-custom text-center">
-          <h2 className="text-3xl font-heading font-bold text-dark mb-6">
+          <h2 className="text-3xl font-heading font-bold text-dark dark:text-white mb-6">
             Ready to Get Started?
           </h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
             Let's discuss how we can help transform your business.
           </p>
           <Link href="/contact" className="btn-primary">
