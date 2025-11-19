@@ -68,6 +68,21 @@ export default async function BlogPage() {
                           {blog.attributes.excerpt}
                         </p>
                       )}
+                      
+                      {/* Tags */}
+                      {blog.attributes.tags && (
+                        <div className="flex flex-wrap gap-2 mt-4">
+                          {blog.attributes.tags.split(',').slice(0, 3).map((tag: string) => (
+                            <span
+                              key={tag.trim()}
+                              className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-xs font-medium"
+                            >
+                              {tag.trim()}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      
                       <div className="mt-4 text-primary dark:text-secondary font-medium flex items-center">
                         Read More
                         <svg

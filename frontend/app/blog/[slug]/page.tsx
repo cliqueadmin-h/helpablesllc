@@ -85,6 +85,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <div className="text-white/80 text-lg">
             {formatDate(blog.attributes.createdAt)}
           </div>
+          {blog.attributes.tags && (
+            <div className="flex flex-wrap gap-2 mt-6">
+              {blog.attributes.tags.split(',').map((tag: string) => (
+                <span
+                  key={tag.trim()}
+                  className="px-4 py-2 bg-white/20 backdrop-blur-sm text-white rounded-full text-sm font-medium"
+                >
+                  {tag.trim()}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
