@@ -36,9 +36,8 @@
       "allowedTypes": ["images"]
     },
     "tags": {
-      "type": "json",
-      "required": false,
-      "default": []
+      "type": "string",
+      "required": false
     }
   }
 }
