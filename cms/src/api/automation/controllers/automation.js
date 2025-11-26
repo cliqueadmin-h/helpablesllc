@@ -176,9 +176,3 @@ module.exports = {
     }
   },
 };
-        strapi.log.error('Workflow trigger error:', error.message);
-        return ctx.internalServerError('An error occurred while triggering workflow');
-      }
-    }
-  },
-};
