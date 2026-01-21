@@ -182,4 +182,299 @@ export function formatDate(date: string): string {
   });
 }
 
-export type { StrapiEntry, StrapiImage, StrapiResponse };
+// ============================================
+// CREATE, UPDATE, DELETE OPERATIONS
+// Requires authentication (JWT token)
+// ============================================
+
+interface UploadedFile {
+  id: number;
+  name: string;
+  url: string;
+  mime: string;
+  size: number;
+}
+
+interface CreateEntryOptions {
+  /** JWT token for authentication */
+  token: string;
+  /** Whether to publish immediately (default: false = draft) */
+  publish?: boolean;
+}
+
+interface UpdateEntryOptions extends CreateEntryOptions {
+  /** Entry ID to update */
+  id: number | string;
+}
+
+/**
+ * Upload a file/image to Strapi
+ * Works with File objects (browser), Blob, or FormData
+ * 
+ * @example
+ * // Browser file input
+ * const file = inputElement.files[0];
+ * const uploaded = await uploadFile(file, token);
+ * 
+ * @example
+ * // React Native with image picker
+ * const formData = new FormData();
+ * formData.append('files', { uri, name, type });
+ * const uploaded = await uploadFile(formData, token);
+ */
+export async function uploadFile(
+  file: File | Blob | FormData,
+  token: string
+): Promise<UploadedFile | null> {
+  try {
+    let formData: FormData;
+    
+    if (file instanceof FormData) {
+      formData = file;
+    } else {
+      formData = new FormData();
+      formData.append('files', file);
+    }
+
+    const res = await fetch(`${STRAPI_URL}/api/upload`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error?.error?.message || `Upload failed: ${res.statusText}`);
+    }
+
+    const uploadedFiles = await res.json();
+    return uploadedFiles[0] || null;
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    throw error;
+  }
+}
+
+/**
+ * Upload multiple files to Strapi
+ */
+export async function uploadFiles(
+  files: File[] | FileList,
+  token: string
+): Promise<UploadedFile[]> {
+  try {
+    const formData = new FormData();
+    
+    const fileArray = Array.from(files);
+    fileArray.forEach((file) => {
+      formData.append('files', file);
+    });
+
+    const res = await fetch(`${STRAPI_URL}/api/upload`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error?.error?.message || `Upload failed: ${res.statusText}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('Error uploading files:', error);
+    throw error;
+  }
+}
+
+/**
+ * Create a new entry in Strapi
+ * 
+ * @example
+ * // Create a blog post
+ * const blog = await createEntry('blogs', {
+ *   title: 'My Blog Post',
+ *   slug: 'my-blog-post',
+ *   body: 'Content here...',
+ *   excerpt: 'Short description',
+ *   tags: 'tech, tutorial',
+ *   coverImage: uploadedImageId, // ID from uploadFile()
+ * }, { token: userJWT, publish: true });
+ */
+export async function createEntry(
+  type: string,
+  data: Record<string, any>,
+  options: CreateEntryOptions
+): Promise<StrapiEntry> {
+  const { token, publish = false } = options;
+
+  try {
+    const payload: any = { data };
+    
+    // If publish is true, set publishedAt to now
+    if (publish) {
+      payload.data.publishedAt = new Date().toISOString();
+    }
+
+    const res = await fetch(`${STRAPI_URL}/api/${type}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error?.error?.message || `Failed to create ${type}: ${res.statusText}`);
+    }
+
+    const json: StrapiResponse<StrapiEntry> = await res.json();
+    return json.data;
+  } catch (error) {
+    console.error(`Error creating ${type}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Update an existing entry in Strapi
+ * 
+ * @example
+ * const updated = await updateEntry('blogs', {
+ *   title: 'Updated Title',
+ * }, { token: userJWT, id: 123 });
+ */
+export async function updateEntry(
+  type: string,
+  data: Record<string, any>,
+  options: UpdateEntryOptions
+): Promise<StrapiEntry> {
+  const { token, id, publish } = options;
+
+  try {
+    const payload: any = { data };
+    
+    if (publish !== undefined) {
+      payload.data.publishedAt = publish ? new Date().toISOString() : null;
+    }
+
+    const res = await fetch(`${STRAPI_URL}/api/${type}/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error?.error?.message || `Failed to update ${type}/${id}: ${res.statusText}`);
+    }
+
+    const json: StrapiResponse<StrapiEntry> = await res.json();
+    return json.data;
+  } catch (error) {
+    console.error(`Error updating ${type}/${id}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Delete an entry from Strapi
+ * 
+ * @example
+ * await deleteEntry('blogs', 123, token);
+ */
+export async function deleteEntry(
+  type: string,
+  id: number | string,
+  token: string
+): Promise<boolean> {
+  try {
+    const res = await fetch(`${STRAPI_URL}/api/${type}/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(error?.error?.message || `Failed to delete ${type}/${id}: ${res.statusText}`);
+    }
+
+    return true;
+  } catch (error) {
+    console.error(`Error deleting ${type}/${id}:`, error);
+    throw error;
+  }
+}
+
+/**
+ * Create a blog post with optional image upload
+ * Convenience function that handles the two-step process
+ * 
+ * @example
+ * // With image file
+ * const blog = await createBlog({
+ *   title: 'My Post',
+ *   body: 'Content...',
+ *   excerpt: 'Short desc',
+ *   tags: 'tech',
+ * }, token, imageFile);
+ * 
+ * @example
+ * // Without image
+ * const blog = await createBlog({
+ *   title: 'My Post',
+ *   body: 'Content...',
+ * }, token);
+ */
+export async function createBlog(
+  data: {
+    title: string;
+    body: string;
+    slug?: string;
+    excerpt?: string;
+    tags?: string;
+  },
+  token: string,
+  coverImage?: File | Blob | FormData,
+  publish: boolean = false
+): Promise<StrapiEntry> {
+  try {
+    // Generate slug from title if not provided
+    const slug = data.slug || data.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
+
+    const blogData: Record<string, any> = {
+      ...data,
+      slug,
+    };
+
+    // Upload cover image if provided
+    if (coverImage) {
+      const uploaded = await uploadFile(coverImage, token);
+      if (uploaded) {
+        blogData.coverImage = uploaded.id;
+      }
+    }
+
+    return await createEntry('blogs', blogData, { token, publish });
+  } catch (error) {
+    console.error('Error creating blog:', error);
+    throw error;
+  }
+}
+
+export type { StrapiEntry, StrapiImage, StrapiResponse, UploadedFile, CreateEntryOptions, UpdateEntryOptions };
