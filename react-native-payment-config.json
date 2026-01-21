@@ -1,0 +1,65 @@
+{
+  "stripe": {
+    "publishableKey": "pk_live_51SUfOnBw1EI55Q5ihofv6kCgQUs7yugCJdIUUV2kTVdiBosiLd5erO5Wa1Bh9QCn6gdhAVyVrDPRXhKnctGAEJfU00KhntSrPg",
+    "getKeyFrom": "https://dashboard.stripe.com/apikeys"
+  },
+  "api": {
+    "baseUrl": "https://helpablesllc-production.up.railway.app",
+    "endpoints": {
+      "createPayment": {
+        "url": "https://helpablesllc-production.up.railway.app/api/payment/create-intent",
+        "method": "POST",
+        "body": {
+          "amount": 2500,
+          "currency": "usd",
+          "service": "Service Name",
+          "customerEmail": "user@example.com",
+          "customerName": "John Doe"
+        },
+        "response": {
+          "success": true,
+          "clientSecret": "pi_xxx_secret_yyy",
+          "paymentIntentId": "pi_xxx",
+          "orderId": 1,
+          "amount": 2500,
+          "currency": "usd"
+        }
+      },
+      "getOrderStatus": {
+        "url": "https://helpablesllc-production.up.railway.app/api/payment/order/{orderId}",
+        "method": "GET",
+        "response": {
+          "success": true,
+          "order": {
+            "id": 1,
+            "status": "succeeded",
+            "amount": 2500,
+            "currency": "usd",
+            "service": "Service Name",
+            "customerEmail": "user@example.com",
+            "customerName": "John Doe",
+            "receiptUrl": "https://pay.stripe.com/receipts/...",
+            "createdAt": "2024-01-15T10:30:00.000Z",
+            "updatedAt": "2024-01-15T10:31:00.000Z"
+          }
+        }
+      }
+    }
+  },
+  "testCards": {
+    "success": "4242 4242 4242 4242",
+    "decline": "4000 0000 0000 0002",
+    "requiresAuth": "4000 0025 0000 3155",
+    "expiry": "12/34",
+    "cvc": "123"
+  },
+  "orderStatus": {
+    "pending": "Payment created but not completed",
+    "processing": "Payment is being processed",
+    "succeeded": "Payment completed successfully",
+    "failed": "Payment failed",
+    "canceled": "Payment canceled by user",
+    "refunded": "Payment refunded"
+  },
+  "npmPackage": "@stripe/stripe-react-native"
+}

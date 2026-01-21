@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stripe Payment Test</title>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <h1>Test Stripe Payment</h1>
+    <button id="pay-button">Pay $25.00</button>
+    <div id="result"></div>
+
+    <script>
+        // Replace with your Stripe publishable key
+        const stripe = Stripe('pk_test_YOUR_PUBLISHABLE_KEY_HERE');
+        const STRAPI_URL = 'https://helpablesllc-production.up.railway.app';
+
+        document.getElementById('pay-button').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Processing...';
+
+            try {
+                // 1. Create payment intent
+                const response = await fetch(`${STRAPI_URL}/api/payment/create-intent`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        amount: 2500,
+                        currency: 'usd',
+                        service: 'Web Development',
+                        customerEmail: 'test@example.com',
+                        customerName: 'Test User'
+                    })
+                });
+
+                const data = await response.json();
+                console.log('Payment Intent Created:', data);
+
+                // 2. Confirm payment with test card
+                const { error, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, {
+                    payment_method: {
+                        card: {
+                            token: 'tok_visa', // Test token
+                        },
+                    },
+                });
+
+                if (error) {
+                    resultDiv.innerHTML = `Error: ${error.message}`;
+                } else {
+                    resultDiv.innerHTML = `
+                        <h2>✅ Payment Successful!</h2>
+                        <p>Payment Intent: ${paymentIntent.id}</p>
+                        <p>Status: ${paymentIntent.status}</p>
+                        <p>Order ID: ${data.orderId}</p>
+                    `;
+
+                    // 3. Check order status
+                    setTimeout(async () => {
+                        const orderResponse = await fetch(`${STRAPI_URL}/api/payment/order/${data.orderId}`);
+                        const orderData = await orderResponse.json();
+                        console.log('Order Status:', orderData);
+                        resultDiv.innerHTML += `<p>Order Status in Database: ${orderData.order.status}</p>`;
+                    }, 2000);
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `Error: ${err.message}`;
+                console.error(err);
+            }
+        });
+    </script>
+</body>
+</html>
