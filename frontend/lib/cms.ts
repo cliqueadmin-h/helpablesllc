@@ -172,7 +172,7 @@ export function parseShortSummary(text: string): ParsedSummary {
 
   for (const line of lines) {
     if (!line) continue;
-    if (line.startsWith('$') && result.pricing === null) {
+    if (result.pricing === null && (line.startsWith('$') || /^Starting at \$/i.test(line))) {
       result.pricing = line;
     } else if (line === 'Includes:') {
       mode = 'includes';
