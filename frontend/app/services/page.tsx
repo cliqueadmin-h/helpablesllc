@@ -2,6 +2,36 @@ import { getEntries } from '@/lib/cms';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+interface ParsedSummary {
+  pricing: string | null;
+  intro: string | null;
+  includes: string[];
+  bestFor: string | null;
+}
+
+function parseShortSummary(text: string): ParsedSummary {
+  const lines = text.split('\n').map((l) => l.trim());
+  const result: ParsedSummary = { pricing: null, intro: null, includes: [], bestFor: null };
+  let mode: 'header' | 'includes' = 'header';
+
+  for (const line of lines) {
+    if (!line) continue;
+    if (line.startsWith('$') && result.pricing === null) {
+      result.pricing = line;
+    } else if (line === 'Includes:') {
+      mode = 'includes';
+    } else if (line.startsWith('Best for:')) {
+      mode = 'header';
+      result.bestFor = line.replace('Best for:', '').trim();
+    } else if (mode === 'includes') {
+      result.includes.push(line);
+    } else if (result.pricing !== null && result.intro === null) {
+      result.intro = line;
+    }
+  }
+  return result;
+}
+
 export const metadata: Metadata = {
   title: 'Our Services - Helpables LLC',
   description: 'Explore our comprehensive range of services including AI integration, custom development, and automation solutions.',
@@ -31,31 +61,73 @@ export default async function ServicesPage() {
         <div className="container-custom">
           {services.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {services.map((service, index) => (
-                <Link
-                  key={service.id}
-                  href={`/services/${service.attributes.slug || service.attributes.title.toLowerCase().replace(/\s+/g, '-')}`}
-                  className="card hover:scale-105 transition-transform duration-200 cursor-pointer group"
-                >
-                  {service.attributes.icon && (
-                    <div className="text-5xl mb-6 group-hover:scale-110 transition-transform">
-                      {service.attributes.icon}
+              {services.map((service) => {
+                const attrs = service.attributes;
+                const parsed = attrs.shortSummary ? parseShortSummary(attrs.shortSummary) : null;
+                const slug = attrs.slug || attrs.title.toLowerCase().replace(/\s+/g, '-');
+                return (
+                  <Link
+                    key={service.id}
+                    href={`/services/${slug}`}
+                    className="card hover:scale-105 transition-transform duration-200 cursor-pointer group flex flex-col"
+                  >
+                    {attrs.icon && (
+                      <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">
+                        {attrs.icon}
+                      </div>
+                    )}
+                    <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      {attrs.title}
+                    </h3>
+
+                    {parsed ? (
+                      <>
+                        {parsed.pricing && (
+                          <p className="text-blue-600 dark:text-blue-400 font-semibold text-sm mb-3">
+                            {parsed.pricing}
+                          </p>
+                        )}
+                        {parsed.intro && (
+                          <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
+                            {parsed.intro}
+                          </p>
+                        )}
+                        {parsed.includes.length > 0 && (
+                          <div className="mb-4">
+                            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">
+                              Includes
+                            </p>
+                            <ul className="space-y-1">
+                              {parsed.includes.map((item) => (
+                                <li key={item} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {parsed.bestFor && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-auto pt-3 border-t border-gray-200 dark:border-gray-700">
+                            <span className="font-semibold">Best for:</span> {parsed.bestFor}
+                          </p>
+                        )}
+                      </>
+                    ) : (
+                      <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+                        {attrs.description}
+                      </p>
+                    )}
+
+                    <div className="text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-2 mt-4">
+                      Learn More
+                      <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
                     </div>
-                  )}
-                  <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                    {service.attributes.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
-                    {service.attributes.description}
-                  </p>
-                  <div className="text-blue-600 dark:text-blue-400 font-semibold flex items-center gap-2">
-                    Learn More
-                    <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
           ) : (
             // Fallback content

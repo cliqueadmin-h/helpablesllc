@@ -11,7 +11,13 @@
     "build:frontend": "cd frontend && npm run build",
     "build:cms": "cd cms && npm run build",
     "build": "npm run build:cms && npm run build:frontend",
-    "install:all": "cd frontend && npm install && cd ../cms && npm install"
+    "install:all": "cd frontend && npm install && cd ../cms && npm install",
+    "services:check": "node --env-file=cms/.env check-services.js",
+    "services:publish": "node --env-file=cms/.env publish-services.js",
+    "services:update": "node --env-file=cms/.env update-services.js",
+    "services:enable-perms": "node --env-file=cms/.env enable-service-permissions.js",
+    "contact:enable-perms": "node --env-file=cms/.env enable-contact-permissions.js",
+    "services:reset": "env $(grep -v '^#' cms/.env | grep -E '^ADMIN_EMAIL=|^ADMIN_PASSWORD=' | xargs) node reset-services.js"
   },
   "repository": {
     "type": "git",
