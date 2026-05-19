@@ -1,4 +1,4 @@
-import { getEntries, getSingleType, getStrapiImageUrl } from '@/lib/cms';
+import { getEntries, getSingleType, getStrapiImageUrl, parseShortSummary } from '@/lib/cms';
 import Hero from '@/components/Hero';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -45,21 +45,60 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {services.length > 0 ? (
-              services.map((service) => (
-                <Link
-                  key={service.id}
-                  href={`/services/${service.attributes.slug}`}
-                  className="card hover:scale-105 transition-transform duration-200 cursor-pointer"
-                >
-                  {service.attributes.icon && (
-                    <div className="text-4xl mb-4">{service.attributes.icon}</div>
-                  )}
-                  <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-3">
-                    {service.attributes.title}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-4">{service.attributes.description}</p>
-                </Link>
-              ))
+              services.map((service) => {
+                const attrs = service.attributes;
+                const parsed = attrs.shortSummary ? parseShortSummary(attrs.shortSummary) : null;
+                return (
+                  <Link
+                    key={service.id}
+                    href={`/services/${attrs.slug}`}
+                    className="card hover:scale-105 transition-transform duration-200 cursor-pointer group flex flex-col"
+                  >
+                    {attrs.icon && (
+                      <div className="text-4xl mb-4 group-hover:scale-110 transition-transform">{attrs.icon}</div>
+                    )}
+                    <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                      {attrs.title}
+                    </h3>
+                    {parsed ? (
+                      <>
+                        {parsed.pricing && (
+                          <p className="text-blue-600 dark:text-blue-400 font-semibold text-sm mb-3">
+                            {parsed.pricing}
+                          </p>
+                        )}
+                        {parsed.intro && (
+                          <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
+                            {parsed.intro}
+                          </p>
+                        )}
+                        {parsed.includes.length > 0 && (
+                          <div className="mb-4">
+                            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-2">
+                              Includes
+                            </p>
+                            <ul className="space-y-1">
+                              {parsed.includes.map((item) => (
+                                <li key={item} className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
+                                  {item}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {parsed.bestFor && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-auto pt-3 border-t border-gray-200 dark:border-gray-700">
+                            <span className="font-semibold">Best for:</span> {parsed.bestFor}
+                          </p>
+                        )}
+                      </>
+                    ) : (
+                      <p className="text-gray-600 dark:text-gray-300 mb-4">{attrs.description}</p>
+                    )}
+                  </Link>
+                );
+              })
             ) : (
               // Fallback services
               <>

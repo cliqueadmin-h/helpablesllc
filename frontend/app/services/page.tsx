@@ -1,36 +1,6 @@
-import { getEntries } from '@/lib/cms';
+import { getEntries, parseShortSummary } from '@/lib/cms';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-
-interface ParsedSummary {
-  pricing: string | null;
-  intro: string | null;
-  includes: string[];
-  bestFor: string | null;
-}
-
-function parseShortSummary(text: string): ParsedSummary {
-  const lines = text.split('\n').map((l) => l.trim());
-  const result: ParsedSummary = { pricing: null, intro: null, includes: [], bestFor: null };
-  let mode: 'header' | 'includes' = 'header';
-
-  for (const line of lines) {
-    if (!line) continue;
-    if (line.startsWith('$') && result.pricing === null) {
-      result.pricing = line;
-    } else if (line === 'Includes:') {
-      mode = 'includes';
-    } else if (line.startsWith('Best for:')) {
-      mode = 'header';
-      result.bestFor = line.replace('Best for:', '').trim();
-    } else if (mode === 'includes') {
-      result.includes.push(line);
-    } else if (result.pricing !== null && result.intro === null) {
-      result.intro = line;
-    }
-  }
-  return result;
-}
 
 export const metadata: Metadata = {
   title: 'Our Services - Helpables LLC',
