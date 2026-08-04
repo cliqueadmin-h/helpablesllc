@@ -39,11 +39,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const [services, posts] = await Promise.all([
-      getEntries('services', { 'pagination[pageSize]': '100' }),
-      getEntries('blogs', { 'pagination[pageSize]': '100' }),
+      getEntries('services', { pagination: { pageSize: 100 } }),
+      getEntries('blogs', { pagination: { pageSize: 100 } }),
     ]);
 
-    const serviceRoutes: MetadataRoute.Sitemap = (services?.data ?? [])
+    const serviceRoutes: MetadataRoute.Sitemap = (services ?? [])
       .filter((s: any) => s?.attributes?.slug)
       .map((service: any) => ({
         url: `${BASE_URL}/services/${service.attributes.slug}`,
@@ -52,7 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
       }));
 
-    const blogRoutes: MetadataRoute.Sitemap = (posts?.data ?? [])
+    const blogRoutes: MetadataRoute.Sitemap = (posts ?? [])
       .filter((p: any) => p?.attributes?.slug)
       .map((post: any) => ({
         url: `${BASE_URL}/blog/${post.attributes.slug}`,
