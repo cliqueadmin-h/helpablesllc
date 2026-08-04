@@ -17,22 +17,39 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Helpables LLC - Empowering Your Digital Transformation",
-  description: "Helpables LLC provides innovative solutions for your business needs, from AI integration to custom development and automation.",
-  keywords: ["business solutions", "AI integration", "automation", "digital transformation", "Helpables"],
+  title: "Helpables LLC - AI Automation & Digital Agency",
+  description: "Helpables LLC is an AI-first digital agency offering CRM automation, GoHighLevel setup, lead generation, missed-call text back, web & mobile app development, and n8n workflows for small businesses.",
+  keywords: [
+    "AI automation agency",
+    "digital agency",
+    "GoHighLevel",
+    "CRM automation",
+    "lead generation",
+    "missed call text back",
+    "n8n workflows",
+    "web app development",
+    "Helpables",
+    "helpables.io",
+    "small business automation",
+    "AI integration",
+  ],
   authors: [{ name: "Helpables LLC" }],
+  metadataBase: new URL("https://helpables.io"),
+  alternates: {
+    canonical: "https://helpables.io",
+  },
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
     googleBot: {
-      index: false,
-      follow: false,
+      index: true,
+      follow: true,
     },
   },
   openGraph: {
     title: "Helpables LLC - Empowering Your Digital Transformation",
     description: "Innovative solutions for your business needs",
-    url: "https://helpables.com",
+    url: "https://helpables.io",
     siteName: "Helpables LLC",
     images: [
       {
