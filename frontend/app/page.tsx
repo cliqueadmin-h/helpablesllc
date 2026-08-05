@@ -144,6 +144,101 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Process Section */}
+      <section className="py-20 bg-light dark:bg-gray-800 transition-colors">
+        <div className="container-custom">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-heading font-bold text-dark dark:text-white mb-4">
+              AI That Is Measured, Tested, and Improved
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+              We do not simply connect an AI model and call the solution complete. Every
+              Helpables AI system is designed to be accurate, reliable, secure, and
+              cost-efficient in real-world use.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                step: '01',
+                title: 'Model and Prompt Optimization',
+                description:
+                  'We evaluate the right combination of models, prompts, context, and configuration for each use case, using domain-specific tuning to improve consistency, terminology, classification, formatting, and task performance.',
+              },
+              {
+                step: '02',
+                title: 'AI Evaluation and Testing',
+                description:
+                  'We create representative evaluation datasets and test AI outputs against defined quality standards—measuring accuracy, relevance, groundedness, consistency, safety, latency, and cost before and after implementation.',
+              },
+              {
+                step: '03',
+                title: 'Continuous AI Monitoring',
+                description:
+                  'Production AI behavior changes as users, data, prompts, and models evolve. We monitor failures, response quality, token usage, latency, tool execution, escalation rates, and unexpected behavior so problems are caught early.',
+              },
+              {
+                step: '04',
+                title: 'RAG and Knowledge Optimization',
+                description:
+                  'For systems that use company documents or internal knowledge, we optimize document preparation, chunking, embeddings, retrieval, metadata filtering, re-ranking, and citations to reduce unsupported answers.',
+              },
+              {
+                step: '05',
+                title: 'Reliability and Human Oversight',
+                description:
+                  'We implement validation rules, confidence thresholds, approval workflows, audit logs, fallback models, and human escalation for decisions that should not be made by AI alone.',
+              },
+              {
+                step: '06',
+                title: 'Measurable Improvement',
+                description:
+                  'Where possible, we provide a before-and-after AI scorecard so you can see the impact of every optimization we make.',
+              },
+            ].map((item) => (
+              <div key={item.step} className="card flex flex-col">
+                <span className="text-4xl font-heading font-bold text-blue-600 dark:text-blue-400 mb-4">
+                  {item.step}
+                </span>
+                <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-3">
+                  {item.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12 max-w-4xl mx-auto rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-8 md:p-10 transition-colors">
+            <h3 className="text-2xl font-heading font-semibold text-dark dark:text-white mb-2 text-center">
+              Your AI Scorecard
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 text-center mb-8 max-w-2xl mx-auto">
+              The result is not just an AI-powered product—it is an AI system that can be
+              evaluated, monitored, and continuously improved.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
+              {[
+                'Task success rate',
+                'Answer accuracy',
+                'Hallucination / unsupported-answer rate',
+                'Response latency',
+                'Cost per request',
+                'Escalation rate',
+                'User satisfaction',
+              ].map((metric) => (
+                <div key={metric} className="flex items-center gap-3">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
+                  <span className="text-gray-700 dark:text-gray-300">{metric}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials Section */}
       {testimonials.length > 0 && (
         <section className="py-20 bg-light dark:bg-gray-800 transition-colors">
