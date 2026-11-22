@@ -1,12 +1,8 @@
-name: Deploy to Netlify
+name: Validate alternate deployment configuration
 
+# Do not revive duplicate automatic deployments. netlify-deploy.yml owns its existing triggers.
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
 
 env:
   NODE_VERSION: '20'
@@ -77,15 +73,38 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Detect deploy targets
+        id: deploy-targets
+        env:
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -n "$AZURE_CREDENTIALS" ]; then
+            echo "azure=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "azure=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -n "$RAILWAY_TOKEN" ]; then
+            echo "railway=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "railway=false" >> "$GITHUB_OUTPUT"
+          fi
+          if [ -n "$RENDER_DEPLOY_HOOK" ]; then
+            echo "render=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "render=false" >> "$GITHUB_OUTPUT"
+          fi
+
       # Option 1: Deploy to Azure Container Apps
       - name: Deploy to Azure Container Apps
-        if: secrets.AZURE_CREDENTIALS != ''
-        uses: azure/login@v1
+        if: steps.deploy-targets.outputs.azure == 'true'
+        uses: azure/login@a641126d1b8aa4d1fa005f4f92df94a3a4c4c906 # v3.1.0
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       
       - name: Build and push Docker image to Azure
-        if: secrets.AZURE_CREDENTIALS != ''
+        if: steps.deploy-targets.outputs.azure == 'true'
         working-directory: ./cms
         run: |
           az acr build --registry ${{ secrets.AZURE_REGISTRY_NAME }} \
@@ -94,7 +113,7 @@ jobs:
             --file Dockerfile .
       
       - name: Deploy to Azure Container App
-        if: secrets.AZURE_CREDENTIALS != ''
+        if: steps.deploy-targets.outputs.azure == 'true'
         run: |
           az containerapp update \
             --name ${{ secrets.AZURE_CONTAINERAPP_NAME }} \
@@ -103,7 +122,7 @@ jobs:
 
       # Option 2: Deploy to Railway (using Railway CLI)
       - name: Deploy to Railway
-        if: secrets.RAILWAY_TOKEN != ''
+        if: steps.deploy-targets.outputs.railway == 'true'
         working-directory: ./cms
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
@@ -113,6 +132,6 @@ jobs:
 
       # Option 3: Deploy to Render
       - name: Trigger Render Deploy
-        if: secrets.RENDER_DEPLOY_HOOK != ''
+        if: steps.deploy-targets.outputs.render == 'true'
         run: |
           curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
