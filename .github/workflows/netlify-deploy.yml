@@ -42,6 +42,7 @@ jobs:
         working-directory: ./frontend
         env:
           NEXT_PUBLIC_STRAPI_URL: ${{ secrets.NEXT_PUBLIC_STRAPI_URL || 'http://localhost:1337' }}
+          NEXT_PUBLIC_PREVIEW_READ_ONLY: ${{ github.event_name == 'pull_request' && '1' || '0' }}
         run: npm run build
 
       - name: Deploy to Netlify (Production)

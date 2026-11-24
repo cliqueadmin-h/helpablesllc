@@ -248,14 +248,14 @@ export default async function Home() {
                 What Our Clients Say
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                Don't just take our word for it
+                Don&apos;t just take our word for it
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {testimonials.map((testimonial) => (
                 <div key={testimonial.id} className="card">
-                  <div className="text-primary text-4xl mb-4">"</div>
+                  <div className="text-primary text-4xl mb-4">&quot;</div>
                   <p className="text-gray-700 dark:text-gray-300 mb-6 italic">
                     {testimonial.attributes.quote}
                   </p>
@@ -283,7 +283,7 @@ export default async function Home() {
             Ready to Transform Your Business?
           </h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto opacity-90">
-            Let's discuss how we can help you achieve your goals with innovative solutions.
+            Let&apos;s discuss how we can help you achieve your goals with innovative solutions.
           </p>
           <Link
             href="/contact"

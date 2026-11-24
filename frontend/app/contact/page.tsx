@@ -4,6 +4,8 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CalendlyWidget from '@/components/CalendlyWidget';
 
+const previewReadOnly = process.env.NEXT_PUBLIC_PREVIEW_READ_ONLY === '1';
+
 function ContactContent() {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'message' | 'booking'>('message');
@@ -34,6 +36,7 @@ function ContactContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (previewReadOnly) return;
     setStatus('loading');
     setErrorMessage('');
 
@@ -64,6 +67,15 @@ function ContactContent() {
       console.error('Contact form error:', error);
     }
   };
+
+  if (previewReadOnly) {
+    return (
+      <main className="mx-auto max-w-3xl px-4 py-12">
+        <h1 className="text-4xl font-bold">Contact Us</h1>
+        <p className="mt-4">This preview is read-only. Messages and bookings are disabled.</p>
+      </main>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
@@ -109,7 +121,7 @@ function ContactContent() {
               <div className="text-green-600 text-6xl mb-4">✓</div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Thank You!</h2>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Your message has been sent successfully. We'll get back to you soon.
+                Your inquiry was received.
               </p>
               <button
                 onClick={() => setStatus('idle')}

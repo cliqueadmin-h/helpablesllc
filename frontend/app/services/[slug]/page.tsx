@@ -171,7 +171,7 @@ export default async function ServiceDetailPage({ params }: { params: { slug: st
         <section className="mt-16 text-center bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl p-12 text-white">
           <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
           <p className="text-xl mb-8 text-white/90">
-            Let's discuss how {title.toLowerCase()} can help your business grow.
+            Let&apos;s discuss how {title.toLowerCase()} can help your business grow.
           </p>
           <Link
             href="/contact"

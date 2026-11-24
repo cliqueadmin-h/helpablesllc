@@ -109,7 +109,7 @@ export default async function BlogPage() {
                 No Blog Posts Yet
               </h3>
               <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
-                We're working on creating amazing content for you. Check back soon!
+                We&apos;re working on creating amazing content for you. Check back soon!
               </p>
             </div>
           )}
