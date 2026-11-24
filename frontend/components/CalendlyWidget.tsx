@@ -60,7 +60,7 @@ export default function CalendlyWidget({ url = 'https://calendly.com/cliqueadmin
               >
                 support@helpables.org
               </a>
-              {' '}with your preferred time and we'll confirm your consultation.
+              {' '}with your preferred time and we&apos;ll confirm your consultation.
             </p>
           </div>
         </div>

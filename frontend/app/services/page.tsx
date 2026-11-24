@@ -164,7 +164,7 @@ export default async function ServicesPage() {
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
             We specialize in creating bespoke solutions tailored to your specific needs.
-            Let's discuss your project.
+            Let&apos;s discuss your project.
           </p>
           <a href="/contact" className="btn-primary">
             Contact Us Today

@@ -132,7 +132,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             Ready to Get Started?
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-            Let's discuss how we can help transform your business.
+            Let&apos;s discuss how we can help transform your business.
           </p>
           <Link href="/contact" className="btn-primary">
             Contact Us
