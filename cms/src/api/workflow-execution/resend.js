@@ -18,7 +18,7 @@ module.exports = async function sendEmail(message, { signal, idempotencyKey }) {
       body: JSON.stringify(message),
     });
   } catch {
-    throw new WorkflowFailure('network');
+    throw new WorkflowFailure(signal?.aborted ? 'timeout' : 'network');
   }
 
   await response.body?.cancel().catch(() => {});

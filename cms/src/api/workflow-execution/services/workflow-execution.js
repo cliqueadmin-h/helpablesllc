@@ -58,7 +58,7 @@ module.exports = ({ strapi }) => {
 
   async function sendCriticalAlert(row) {
     const to = process.env.WORKFLOW_ALERT_EMAIL;
-    const from = process.env.WORKFLOW_ALERT_FROM;
+    const from = process.env.WORKFLOW_ALERT_FROM || process.env.SMTP_DEFAULT_FROM;
     if (!to || !from) {
       return;
     }
