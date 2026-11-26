@@ -1,231 +1,165 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import Link from 'next/link';
+import { useState, Suspense, type FormEvent } from 'react';
 import { useSearchParams } from 'next/navigation';
 import CalendlyWidget from '@/components/CalendlyWidget';
+import { consultationHref, getOffer } from '@/lib/sales-offer';
 
 const previewReadOnly = process.env.NEXT_PUBLIC_PREVIEW_READ_ONLY === '1';
+const cmsUrl = process.env.NEXT_PUBLIC_STRAPI_URL
+  || (process.env.NODE_ENV === 'development' ? 'http://localhost:1337' : '');
 
-function ContactContent() {
-  const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState<'message' | 'booking'>('message');
+const fields = [
+  { name: 'name', label: 'Name', type: 'text', autoComplete: 'name', required: true },
+  { name: 'email', label: 'Work email', type: 'email', autoComplete: 'email', required: true },
+  { name: 'phone', label: 'Phone (optional)', type: 'tel', autoComplete: 'tel' },
+  { name: 'subject', label: 'Subject (optional)', type: 'text' },
+] as const;
 
-  useEffect(() => {
-    // Check if URL has tab=booking parameter
-    const tab = searchParams.get('tab');
-    if (tab === 'booking') {
-      setActiveTab('booking');
-    }
-  }, [searchParams]);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    subject: '',
-    message: ''
-  });
+function ContactForm({ initialSubject }: { initialSubject: string }) {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (previewReadOnly || status === 'loading') return;
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (previewReadOnly) return;
+    const values = new FormData(event.currentTarget);
+    const data = {
+      name: String(values.get('name') ?? '').trim(),
+      email: String(values.get('email') ?? '').trim(),
+      phone: String(values.get('phone') ?? '').trim(),
+      subject: String(values.get('subject') ?? '').trim(),
+      message: String(values.get('message') ?? '').trim(),
+    };
+
     setStatus('loading');
-    setErrorMessage('');
-
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_STRAPI_URL}/api/contact-submissions`, {
+      if (!cmsUrl || !data.name || !data.message) throw new Error('Inquiry unavailable or incomplete');
+      const response = await fetch(`${cmsUrl.replace(/\/$/, '')}/api/contact-submissions`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ data: formData }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data }),
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit form');
-      }
-
+      if (!response.ok) throw new Error('Inquiry was not accepted');
       setStatus('success');
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
-      });
-    } catch (error) {
+    } catch {
       setStatus('error');
-      setErrorMessage('There was a problem submitting your form. Please try again.');
-      console.error('Contact form error:', error);
     }
-  };
+  }
 
-  if (previewReadOnly) {
+  if (status === 'success') {
     return (
-      <main className="mx-auto max-w-3xl px-4 py-12">
-        <h1 className="text-4xl font-bold">Contact Us</h1>
-        <p className="mt-4">This preview is read-only. Messages and bookings are disabled.</p>
-      </main>
+      <div className="py-6" role="status">
+        <h2 className="text-2xl font-semibold text-slate-950 dark:text-white">Your inquiry was received.</h2>
+        <p className="mt-3 text-slate-600 dark:text-slate-300">We&apos;ll follow up at the email address you provided.</p>
+        <button type="button" onClick={() => setStatus('idle')} className="sales-button mt-6">
+          Send another inquiry
+        </button>
+      </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Contact Us</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400">
-            Send us a message or book a free consultation to discuss your project.
-          </p>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex rounded-lg border border-gray-300 dark:border-gray-600 p-1 bg-gray-100 dark:bg-gray-700">
-            <button
-              onClick={() => setActiveTab('message')}
-              className={`px-6 py-2 rounded-md font-medium transition-all ${
-                activeTab === 'message'
-                  ? 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-              }`}
-            >
-              Send a Message
-            </button>
-            <button
-              onClick={() => setActiveTab('booking')}
-              className={`px-6 py-2 rounded-md font-medium transition-all ${
-                activeTab === 'booking'
-                  ? 'bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 shadow-sm'
-                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-              }`}
-            >
-              📅 Book Free Consultation
-            </button>
+    <form onSubmit={handleSubmit} aria-label="Project inquiry" className="space-y-5">
+      <div className="grid gap-5 sm:grid-cols-2">
+        {fields.map((field) => (
+          <div key={field.name}>
+            <label htmlFor={field.name} className="mb-2 block text-sm font-semibold">{field.label}</label>
+            <input
+              id={field.name}
+              name={field.name}
+              type={field.type}
+              autoComplete={'autoComplete' in field ? field.autoComplete : undefined}
+              required={'required' in field && field.required}
+              defaultValue={field.name === 'subject' ? initialSubject : undefined}
+              maxLength={field.name === 'phone' ? 64 : 255}
+              className="sales-field"
+            />
           </div>
+        ))}
+      </div>
+      <div>
+        <label htmlFor="message" className="mb-2 block text-sm font-semibold">What would you like to improve?</label>
+        <textarea
+          id="message"
+          name="message"
+          required
+          rows={5}
+          className="sales-field"
+          placeholder="What happens when a new lead comes in today?"
+        />
+      </div>
+      {status === 'error' && (
+        <p role="alert" className="rounded-lg bg-red-50 px-3 py-2.5 text-sm text-red-900 dark:bg-red-950 dark:text-red-200">
+          We couldn&apos;t confirm your inquiry. Check the form and try again, or email{' '}
+          <a className="font-semibold underline" href="mailto:support@helpables.org">support@helpables.org</a>.
+        </p>
+      )}
+      <p className="text-sm text-slate-600 dark:text-slate-300">
+        We use these details to respond to your inquiry. <Link href="/privacy" className="font-medium underline">Privacy policy</Link>
+      </p>
+      <button type="submit" disabled={status === 'loading'} className="sales-button">
+        {status === 'loading' ? 'Sending…' : 'Send inquiry'}
+      </button>
+    </form>
+  );
+}
+
+function ContactContent() {
+  const params = useSearchParams();
+  const offer = getOffer(params.get('offer'));
+  const activeTab = params.get('tab') === 'booking' ? 'booking' : 'message';
+  const messageHref = offer ? `/contact?offer=${offer.id}` : '/contact';
+  const bookingHref = offer ? `${messageHref}&tab=booking` : consultationHref;
+
+  if (previewReadOnly) {
+    return (
+      <div className="container-custom py-14">
+        <h1 className="text-4xl font-semibold">Contact Helpables</h1>
+        <p className="mt-4">This preview is read-only. Messages and bookings are disabled.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="sales-hero min-h-[70vh] bg-[#f9faf9] dark:bg-[#0c1519]">
+      <div className="container-custom grid gap-8 py-14 sm:py-20 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
+        <div>
+          <h1 className="max-w-lg text-4xl font-semibold tracking-tight text-slate-950 dark:text-white sm:text-5xl">
+            {offer?.title || 'Tell us about your workflow'}
+          </h1>
+          <p className="mt-4 max-w-lg text-lg leading-8 text-slate-600 dark:text-slate-300">
+            {offer?.description || 'Tell us where leads get stuck today. We can discuss one workflow and agree what a useful next step would look like.'}
+          </p>
+          {offer && <p className="mt-4 font-semibold text-slate-800 dark:text-slate-100">{offer.price} USD {offer.basis} · indicative</p>}
+          <a className="mt-6 inline-flex font-semibold text-emerald-800 hover:underline dark:text-emerald-300" href="mailto:support@helpables.org">
+            support@helpables.org
+          </a>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-8">
-          {activeTab === 'booking' ? (
-            <CalendlyWidget url="https://calendly.com/cliqueadmin-helpables/30min" />
-          ) : status === 'success' ? (
-            <div className="text-center py-8">
-              <div className="text-green-600 text-6xl mb-4">✓</div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Thank You!</h2>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Your inquiry was received.
-              </p>
-              <button
-                onClick={() => setStatus('idle')}
-                className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+        <section aria-label="Contact options" className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-[#101e22] sm:p-7">
+          <div className="mb-6 flex flex-wrap gap-2" role="group" aria-label="How to contact us">
+            {([
+              ['message', 'Send an inquiry', messageHref],
+              ['booking', 'Book a free call', bookingHref],
+            ] as const).map(([value, label, href]) => (
+              <Link
+                key={value}
+                href={href}
+                scroll={false}
+                aria-current={activeTab === value ? 'page' : undefined}
+                className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 hover:border-emerald-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 aria-[current=page]:border-emerald-700 aria-[current=page]:bg-emerald-50 aria-[current=page]:text-emerald-900 dark:border-slate-600 dark:text-slate-200 dark:aria-[current=page]:border-emerald-500 dark:aria-[current=page]:bg-[#193d32] dark:aria-[current=page]:text-emerald-200"
               >
-                Send Another Message
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Name *
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Your name"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Email *
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="your.email@example.com"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Phone
-                </label>
-                <input
-                  type="tel"
-                  id="phone"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="(555) 123-4567"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Subject
-                </label>
-                <input
-                  type="text"
-                  id="subject"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="What is this regarding?"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Message *
-                </label>
-                <textarea
-                  id="message"
-                  name="message"
-                  required
-                  rows={6}
-                  value={formData.message}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                  placeholder="Your message here..."
-                />
-              </div>
-
-              {status === 'error' && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
-                  {errorMessage}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={status === 'loading'}
-                className="w-full bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-              >
-                {status === 'loading' ? 'Sending...' : 'Send Message'}
-              </button>
-            </form>
-          )}
-        </div>
+                {label}
+              </Link>
+            ))}
+          </div>
+          <div hidden={activeTab !== 'message'}>
+            <ContactForm key={offer?.id ?? 'general'} initialSubject={offer?.subject ?? ''} />
+          </div>
+          {activeTab === 'booking' && <CalendlyWidget />}
+        </section>
       </div>
     </div>
   );
@@ -233,14 +167,7 @@ function ContactContent() {
 
 export default function ContactPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading...</p>
-        </div>
-      </div>
-    }>
+    <Suspense fallback={<div className="container-custom py-14" role="status">Loading contact options…</div>}>
       <ContactContent />
     </Suspense>
   );

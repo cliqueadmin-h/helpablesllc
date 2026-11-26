@@ -8,6 +8,8 @@ export async function generateMetadata(
   const { openGraph } = await parent;
 
   return {
+    title: "Contact Helpables | Book a Consultation",
+    description: "Send a project inquiry or book a free 30-minute consultation with Helpables.",
     alternates: { canonical: '/contact' },
     openGraph: { ...openGraph, url: '/contact' },
   };
