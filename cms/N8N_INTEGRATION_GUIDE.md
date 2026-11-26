@@ -1,5 +1,7 @@
 # Strapi-to-n8n Integration Guide
 
+> Historical setup reference. Current Strapi versions acknowledge legacy signup requests locally. General workflow requests return HTTP 410 after authentication and input validation. Neither route uses the n8n environment variables.
+
 ## Environment Variables
 
 Add these to your Railway environment variables or local `.env` file:
