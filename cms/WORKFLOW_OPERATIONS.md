@@ -9,3 +9,9 @@ The handler receives an abort signal, execution ID, correlation ID, reference ID
 For critical failures, configure `WORKFLOW_ALERT_EMAIL` to an internal operations mailbox and `WORKFLOW_ALERT_FROM` to a verified Resend sender. The runner uses the existing `RESEND_API_KEY`. Alerts carry execution metadata and are deduplicated in the database by workflow, error category, HTTP status and UTC hour. Check Railway logs for alert delivery failures.
 
 When a handler supports safe replays, provide a `replayWindowMs` bounded by the downstream provider's idempotency retention. A privileged operator can call the registered handler's replay method from a server-side Strapi console using the execution ID. Replay accepts failed or expired executions within that window, claims the record atomically and preserves the downstream key. Confirm the original downstream result before handling an execution outside that window.
+
+## Contact-form notifications
+
+Contact submissions still persist before notification. The handler reads the existing submission, uses the same internal recipient and reply-to, and sends through Resend. It records each delivery operation once. A successful delivery remains protected against repeats even after the provider's idempotency window ends.
+
+Use `npm run strapi -- console` in an authorized backend shell. For a failed contact notification, review its execution record and run `await strapi.service('api::contact-submission.workflow-notification').replay('<execution-id>')`. The handler uses a 23-hour replay window. Leave older executions for manual reconciliation against Resend delivery history.
