@@ -1,0 +1,36 @@
+{
+  "kind": "collectionType",
+  "collectionName": "workflow_executions",
+  "info": {
+    "singularName": "workflow-execution",
+    "pluralName": "workflow-executions",
+    "displayName": "Workflow Execution"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {
+    "content-type-builder": {
+      "visible": false
+    }
+  },
+  "attributes": {
+    "workflow": { "type": "string", "required": true },
+    "executionId": { "type": "uid", "required": true },
+    "correlationId": { "type": "string", "required": true },
+    "dedupeKey": { "type": "uid", "required": true },
+    "referenceId": { "type": "integer" },
+    "status": {
+      "type": "enumeration",
+      "enum": ["running", "succeeded", "failed"],
+      "required": true
+    },
+    "attempts": { "type": "integer", "required": true },
+    "startedAt": { "type": "datetime", "required": true },
+    "finishedAt": { "type": "datetime" },
+    "leaseExpiresAt": { "type": "datetime", "required": true },
+    "leaseToken": { "type": "string", "required": true },
+    "errorCode": { "type": "string" },
+    "errorStatus": { "type": "integer" }
+  }
+}
