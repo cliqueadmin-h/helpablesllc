@@ -23,7 +23,7 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-gray-400 mb-4 max-w-md">
-              Turning vision into intelligent digital reality with the power of design, AI, and automation.
+              Lead capture, follow-up, and reliable handoffs for small service businesses.
             </p>
             <div className="flex space-x-4">
               <a
@@ -87,7 +87,7 @@ export default function Footer() {
           <div>
             <h3 className="font-heading font-semibold text-lg mb-4">Contact</h3>
             <ul className="space-y-2 text-gray-400">
-              <li>Email: support@helpables.org</li>
+              <li><a href="mailto:support@helpables.org" className="hover:text-primary transition-colors">support@helpables.org</a></li>
             </ul>
           </div>
         </div>

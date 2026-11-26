@@ -45,3 +45,17 @@
     text-wrap: balance;
   }
 }
+
+@layer components {
+  .sales-hero {
+    background-image: radial-gradient(ellipse at 78% 0%, rgb(16 185 129 / 0.13), transparent 58%);
+  }
+
+  .sales-button {
+    @apply inline-flex w-fit items-center justify-center gap-2 rounded-lg bg-emerald-800 px-4 py-3 text-center font-semibold text-white transition-colors hover:bg-emerald-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:opacity-70 dark:bg-emerald-300 dark:text-slate-950 dark:hover:bg-emerald-200;
+  }
+
+  .sales-field {
+    @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-slate-900 placeholder:text-slate-500 focus:border-emerald-600 focus:outline focus:outline-1 focus:outline-emerald-600 dark:border-slate-600 dark:bg-[#0c1519] dark:text-white dark:placeholder:text-slate-400;
+  }
+}

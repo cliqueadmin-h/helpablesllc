@@ -37,7 +37,7 @@ export default function CalendlyWidget({ url = 'https://calendly.com/cliqueadmin
       <div 
         className="calendly-inline-widget" 
         data-url={`${url}?hide_gdpr_banner=1&primary_color=3b82f6`}
-        style={{ minWidth: '320px', height: '700px' }}
+        style={{ minWidth: 0, height: '700px' }}
       />
       
       {/* Alternative Contact Option */}
